@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Filament\Resources\PostResource\RelationManagers;
+use App\Filament\Resources\PostResource\RelationManagers\AuthorsRelationManager;
 use App\Models\Category;
 use App\Models\Post;
 use Filament\Forms;
@@ -60,11 +61,11 @@ class PostResource extends Resource
                         TagsInput::make('tags')->required(),
                         Checkbox::make('published')->required(),
                     ]),
-                    Section::make('Author')->schema([
-                        Select::make('authors')
-                            ->multiple()
-                            ->relationship('authors', 'name')
-                    ])
+//                    Section::make('Author')->schema([
+//                        Select::make('authors')
+//                            ->multiple()
+//                            ->relationship('authors', 'name')
+//                    ])
                 ])
             ])->columns(3);
     }
@@ -116,7 +117,7 @@ class PostResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuthorsRelationManager::class
         ];
     }
 
