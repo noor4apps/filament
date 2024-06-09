@@ -59,6 +59,11 @@ class PostResource extends Resource
                     Section::make('Meta')->schema([
                         TagsInput::make('tags')->required(),
                         Checkbox::make('published')->required(),
+                    ]),
+                    Section::make('Author')->schema([
+                        Select::make('authors')
+                            ->multiple()
+                            ->relationship('authors', 'name')
                     ])
                 ])
             ])->columns(3);
