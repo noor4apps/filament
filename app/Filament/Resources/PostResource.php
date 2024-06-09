@@ -15,10 +15,13 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
@@ -39,35 +42,33 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Create a Post')
-                    ->description('create posts over here.')
-                    ->schema([
-                        TextInput::make('title')->minLength('3')->rule('max:8')->required(),
-                        TextInput::make('slug')->required()->unique(ignoreRecord: true),
-                        Select::make('category_id')
-                            ->relationship('category', 'name')
-                            ->searchable()
-                            ->required(),
-                        ColorPicker::make('color')->required(),
-                        MarkdownEditor::make('content')->required()->columnSpanFull(),
-                    ])->columnSpan(2)->columns(2),
-                Group::make()->schema([
-                    Section::make('Image')
-                        ->collapsible()
-                        ->schema([
-                            FileUpload::make('thumbnail')->disk('public')->directory('thumbnails'),
-                        ])->columnSpan(1),
-                    Section::make('Meta')->schema([
-                        TagsInput::make('tags')->required(),
-                        Checkbox::make('published')->required(),
-                    ]),
-//                    Section::make('Author')->schema([
-//                        Select::make('authors')
-//                            ->multiple()
-//                            ->relationship('authors', 'name')
-//                    ])
-                ])
-            ])->columns(3);
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tab::make('Tab 1')
+                            ->icon('heroicon-o-rectangle-stack')
+                            ->iconPosition(IconPosition::After)
+                            ->badge('badge')
+                            ->schema([
+                                TextInput::make('title')->minLength('3')->rule('max:8')->required(),
+                                TextInput::make('slug')->required()->unique(ignoreRecord: true),
+                                Select::make('category_id')
+                                    ->relationship('category', 'name')
+                                    ->searchable()
+                                    ->required(),
+                                ColorPicker::make('color')->required(),
+                            ]),
+                        Tab::make('Content')
+                            ->schema([
+                                MarkdownEditor::make('content')->required()->columnSpanFull(),
+                            ]),
+                        Tab::make('Meta')
+                            ->schema([
+                                FileUpload::make('thumbnail')->disk('public')->directory('thumbnails'),
+                                TagsInput::make('tags')->required(),
+                                Checkbox::make('published')->required(),
+                            ]),
+                    ])->activeTab(3)->persistTabInQueryString()
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
