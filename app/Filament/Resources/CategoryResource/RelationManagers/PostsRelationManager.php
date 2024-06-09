@@ -1,11 +1,7 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\CategoryResource\RelationManagers;
 
-use App\Filament\Resources\PostResource\Pages;
-use App\Filament\Resources\PostResource\RelationManagers;
-use App\Models\Category;
-use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\ColorPicker;
@@ -17,24 +13,19 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\CheckboxColumn;
-use Filament\Tables\Columns\ColorColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Nette\Utils\ImageColor;
 
-class PostResource extends Resource
+class PostsRelationManager extends RelationManager
 {
-    protected static ?string $model = Post::class;
+    protected static string $relationship = 'posts';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -43,10 +34,6 @@ class PostResource extends Resource
                     ->schema([
                         TextInput::make('title')->minLength('3')->rule('max:8')->required(),
                         TextInput::make('slug')->required()->unique(ignoreRecord: true),
-                        Select::make('category_id')
-                            ->relationship('category', 'name')
-                            ->searchable()
-                            ->required(),
                         ColorPicker::make('color')->required(),
                         MarkdownEditor::make('content')->required()->columnSpanFull(),
                     ])->columnSpan(2)->columns(2),
@@ -64,38 +51,20 @@ class PostResource extends Resource
             ])->columns(3);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('title')
             ->columns([
-                TextColumn::make('id')
-                    ->toggleable(isToggledHiddenByDefault: true),
-                ImageColumn::make('thumbnail')
-                    ->toggleable(),
-                ColorColumn::make('color')
-                    ->toggleable(),
-                TextColumn::make('title')
-                    ->toggleable()
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('slug')
-                    ->toggleable()
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('category.name')
-                    ->toggleable()
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('tags')
-                    ->toggleable(),
-                CheckboxColumn::make('published')
-                    ->toggleable(),
-                TextColumn::make('created_at')
-                    ->toggleable()
-                    ->date(),
+                TextColumn::make('title'),
+                TextColumn::make('slug'),
+                CheckboxColumn::make('published'),
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -106,21 +75,5 @@ class PostResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListPosts::route('/'),
-            'create' => Pages\CreatePost::route('/create'),
-            'edit' => Pages\EditPost::route('/{record}/edit'),
-        ];
     }
 }
