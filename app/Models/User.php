@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasFactory, Notifiable;
 
@@ -55,5 +57,13 @@ class User extends Authenticatable
     public function comments()
     {
         return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+//        return $this->is_admin;
+//        return $this->role == 'ADMIN';
+//        return $this->can('');
+        return true;
     }
 }
