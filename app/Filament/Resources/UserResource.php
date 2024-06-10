@@ -36,7 +36,16 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id'),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->badge()
+                    ->color(function (string $state): string {
+                        return match ($state) {
+                            'ADMIN' => 'danger',
+                            'EDITOR' => 'info',
+                            'USER' => 'success',
+                            default => 'gray'
+                        };
+                    }),
                 TextColumn::make('email'),
             ])
             ->filters([
