@@ -27,10 +27,6 @@ class CommentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Blog';
-
-    protected static ?int $navigationSort = 3;
-
     public static function form(Form $form): Form
     {
         return $form
@@ -43,7 +39,7 @@ class CommentResource extends Resource
                     Type::make(Comment::class)->titleAttribute('id'),
                 ])
                     ->preload()
-                    ->label('Comment On')
+                ->label('Comment On')
             ]);
     }
 
