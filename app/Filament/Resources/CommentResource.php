@@ -36,7 +36,7 @@ class CommentResource extends Resource
                 MorphToSelect::make('commentable')->types([
                     Type::make(Post::class)->titleAttribute('title'),
                     Type::make(User::class)->titleAttribute('email'),
-                    Type::make(Comment::class)->titleAttribute('id'),
+                    Type::make(Comment::class)->titleAttribute('comment'),
                 ])
                     ->preload()
                 ->label('Comment On')
